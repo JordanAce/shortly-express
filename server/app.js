@@ -85,14 +85,14 @@ app.post('/signup',
     // return models.Users.create({newUser, newPassword})
     return models.Users.create({username: newUser, password: newPassword})
       .then(result => {
-        res.redirect('/');
-        res.status(201).send(result);
+        res.redirect(201, '/');
+        // res.status(201).send(result);
         next();
       })
       .catch(err => {
         console.log('Error: ' + err);
-        res.redirect('/signup');
-        res.status(400).send(err);
+        res.redirect(400, '/signup');
+        // res.status(400).send(err);
         next();
       });
 
@@ -112,10 +112,10 @@ app.post('/login',
           var loginSuccess = models.Users.compare(password, savedPassword, salt);
           console.log('loginSuccess', loginSuccess);
           if (loginSuccess) {
-            res.redirect('/');
-            res.status(201).send(result);
+            res.redirect(201, '/');
+            //res.status(201).send(result);
           } else {
-            res.status(400).send();
+            res.redirect(400, '/login');
           }
         }))
       .catch(err => {
