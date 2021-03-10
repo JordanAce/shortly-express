@@ -82,17 +82,14 @@ app.post('/signup',
   (req, res, next) => {
     var newUser = req.body.username;
     var newPassword = req.body.password;
-    // return models.Users.create({newUser, newPassword})
     return models.Users.create({username: newUser, password: newPassword})
       .then(result => {
         res.redirect(201, '/');
-        // res.status(201).send(result);
         next();
       })
       .catch(err => {
         console.log('Error: ' + err);
         res.redirect(400, '/signup');
-        // res.status(400).send(err);
         next();
       });
 
@@ -106,6 +103,7 @@ app.post('/login',
       console.log('using SHORTLY db');
     })
       .then(
+        //refactor into users if needed
         db.queryAsync(`SELECT PASSWORD, SALT FROM USERS WHERE USERNAME = '${username}'`, function(err, result) {
           var savedPassword = result[0].PASSWORD;
           var salt = result[0].SALT;
@@ -113,7 +111,6 @@ app.post('/login',
           console.log('loginSuccess', loginSuccess);
           if (loginSuccess) {
             res.redirect(201, '/');
-            //res.status(201).send(result);
           } else {
             res.redirect(400, '/login');
           }
@@ -121,8 +118,6 @@ app.post('/login',
       .catch(err => {
         console.log('query error', err);
       });
-    //models.Users.compare()
-
   });
 
 
