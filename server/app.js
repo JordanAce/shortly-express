@@ -5,6 +5,7 @@ const partials = require('express-partials');
 const bodyParser = require('body-parser');
 const Auth = require('./middleware/auth');
 const models = require('./models');
+const db = require('./db/index.js');
 
 const app = express();
 
@@ -84,6 +85,7 @@ app.post('/signup',
     // return models.Users.create({newUser, newPassword})
     return models.Users.create({username: newUser, password: newPassword})
       .then(result => {
+        res.redirect('/');
         res.status(201).send(result);
         next();
       })
@@ -93,6 +95,33 @@ app.post('/signup',
         res.status(400).send(err);
         next();
       });
+
+  });
+
+app.post('/login',
+  (req, res, next) => {
+    var username = 'Samantha';
+    var password = req.body.password;
+    db.queryAsync('USE SHORTLY', function(err, result) {
+      console.log('using SHORTLY db');
+    })
+      .then(
+        db.queryAsync(`SELECT PASSWORD, SALT FROM USERS WHERE USERNAME = '${username}'`, function(err, result) {
+          var savedPassword = result[0].PASSWORD;
+          var salt = result[0].SALT;
+          var loginSuccess = models.Users.compare(password, savedPassword, salt);
+          console.log('loginSuccess', loginSuccess);
+          if (loginSuccess) {
+            res.redirect('/');
+            res.status(201).send(result);
+          } else {
+            res.status(400).send();
+          }
+        }))
+      .catch(err => {
+        console.log('query error', err);
+      });
+    //models.Users.compare()
 
   });
 
