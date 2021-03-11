@@ -6,6 +6,7 @@ const bodyParser = require('body-parser');
 const Auth = require('./middleware/auth');
 const models = require('./models');
 const db = require('./db/index.js');
+const cookies = require('./middleware/cookieParser.js');
 
 const app = express();
 
