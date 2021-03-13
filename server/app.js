@@ -6,7 +6,9 @@ const bodyParser = require('body-parser');
 const Auth = require('./middleware/auth');
 const models = require('./models');
 const db = require('./db/index.js');
-const cookies = require('./middleware/cookieParser.js');
+const cookieParser = require('./middleware/cookieParser.js');
+const session = require('./middleware/auth.js');
+
 
 const app = express();
 
@@ -16,6 +18,8 @@ app.use(partials());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, '../public')));
+app.use(cookieParser);
+app.use(session.createSession);
 
 
 
@@ -93,7 +97,6 @@ app.post('/signup',
         res.redirect(400, '/signup');
         next();
       });
-
   });
 
 app.post('/login',
@@ -109,7 +112,7 @@ app.post('/login',
           var savedPassword = result[0].PASSWORD;
           var salt = result[0].SALT;
           var loginSuccess = models.Users.compare(password, savedPassword, salt);
-          console.log('loginSuccess', loginSuccess);
+          //console.log('loginSuccess', loginSuccess);
           if (loginSuccess) {
             res.redirect(201, '/');
           } else {
